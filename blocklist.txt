@@ -1,0 +1,5 @@
+# Domain terlarang - Sentinel akan memblokir ini di hosts file & memantau koneksi ke sini
+# Satu domain per baris, baris diawali # adalah komentar
+d.kuku.lu
+filenowsv.com
+# ntfy.sh - sengaja TIDAK diblokir (layanan umum, topic penyerang sudah mati/404)
