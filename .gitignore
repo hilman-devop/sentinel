@@ -43,3 +43,7 @@ logs/
 .gradle/
 .pio/
 .chrome-profile/
+
+# Local machine-specific data.
+baseline.json
+.notify-state

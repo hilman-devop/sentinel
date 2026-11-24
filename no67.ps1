@@ -6,7 +6,7 @@
      (seluruh isi dipindah dulu ke Sentinel\evidence-monarch sebagai bukti)
 #>
 $ErrorActionPreference = 'Continue'
-$root = 'C:\TheGame\Sentinel'
+$root = $PSScriptRoot
 $fLog = Join-Path $root 'no67.log'
 function L($sev, $msg) {
     $line = "{0} [{1}] {2}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $sev, $msg

@@ -1,6 +1,6 @@
 #Requires -RunAsAdministrator
 $ErrorActionPreference = 'Continue'
-$root = 'C:\TheGame\Sentinel'
+$root = $PSScriptRoot
 $fLog = Join-Path $root 'fix.log'
 function FLog($sev, $msg) {
     $line = "{0} [{1}] {2}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $sev, $msg

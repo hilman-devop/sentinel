@@ -27,10 +27,10 @@ $fAlert   = Join-Path $root 'sentinel-alert.log'
 $fBlock   = Join-Path $root 'blocklist.txt'
 $fBlockIP = Join-Path $root 'blocklist-ip.txt'
 
-# SID mesin ini (utk deteksi ACE "asing": SID akun dari mesin lain / akun terhapus)
-$machineSid = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\*' -EA 0 |
-    Where-Object { $_.ProfileImagePath -eq 'C:\Users\Elz' } | Select-Object -First 1).PSChildName
-if (-not $machineSid) { $machineSid = 'S-1-5-21-2407966855-1939356898-479919824-1001' }
+# Prefix SID lokal untuk deteksi ACE asing; tersedia juga saat task berjalan sebagai SYSTEM.
+$machineSid = Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList' -EA 0 |
+    Where-Object { $_.PSChildName -match '^S-1-5-21-' } |
+    Select-Object -First 1 -ExpandProperty PSChildName
 $machineSid = $machineSid -replace '-\d+$',''
 
 # Tulis 1 baris ke sentinel-alert.log.
@@ -118,7 +118,7 @@ function Get-State {
     $st.wmi = @($st.wmi | Sort-Object)
 
     # Run/RunOnce keys (HKLM + semua hive user nyata S-1-5-21-*)
-    # Catatan: HKCU bergantung konteks (SYSTEM saat task jalan vs Elz saat manual) -> dulu
+    # Catatan: HKCU bergantung konteks (SYSTEM saat task jalan vs pengguna saat manual) -> dulu
     # menimbulkan false "hilang [runkey]" tiap scan. Pakai HKEY_USERS\<SID user> agar
     # baseline konsisten dari konteks mana pun. (hive user belum dimuat saat boot sebelum
     # login -> hanya INFO sekali, bukan ALERT)
@@ -169,8 +169,8 @@ function Get-State {
     # G. ACE "asing" pada folder user (SID bukan akun mesin ini / akun sudah dihapus).
     #    Dulu Codex sandbox menempel puluhan SID acak ke folder user; sekarang dipantau.
     $st.foreignAcl = @()
-    $watch = @('C:\TheGame','C:\Users\Elz','C:\Users\Working')
-    $watch += @(Get-ChildItem 'C:\TheGame' -Directory -Force -EA 0 | ForEach-Object { $_.FullName })
+    $watch = @($root, $env:USERPROFILE)
+    $watch += @(Get-ChildItem $root -Directory -Force -EA 0 | ForEach-Object { $_.FullName })
     foreach ($w in ($watch | Sort-Object -Unique)) {
         $acl = Get-Acl $w -EA 0
         if (-not $acl) { continue }

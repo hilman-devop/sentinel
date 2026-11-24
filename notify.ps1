@@ -1,7 +1,7 @@
-# Sentinel - notifikasi desktop (dijalankan task "SentinelNotify" tiap 5 menit, session user Elz)
+# Sentinel - notifikasi desktop (dijalankan task "SentinelNotify" tiap 5 menit, session user)
 # Kalau ada baris BARU di sentinel-alert.log -> muncul popup + bunyi di layar Anda.
 $ErrorActionPreference = 'SilentlyContinue'
-$root = 'C:\TheGame\Sentinel'
+$root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $fAlert = Join-Path $root 'sentinel-alert.log'
 $fState = Join-Path $root '.notify-state'
 

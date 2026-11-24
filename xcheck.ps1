@@ -106,9 +106,11 @@ foreach ($n in 'SentinelWatch','SentinelNotify') {
 # ---- 9. Scan final ----
 P ''
 P '=== 9. SCAN FINAL (dengan whitelist GoogleUpdater) ==='
-$before = @(Get-Content 'C:\TheGame\Sentinel\sentinel.log').Count
-& powershell -NoProfile -ExecutionPolicy Bypass -File 'C:\TheGame\Sentinel\monitor.ps1' -Run | Out-Null
-$after = Get-Content 'C:\TheGame\Sentinel\sentinel.log' | Select-Object -Last 3
+$log = Join-Path $PSScriptRoot 'sentinel.log'
+$monitor = Join-Path $PSScriptRoot 'monitor.ps1'
+$before = @(Get-Content $log).Count
+& powershell -NoProfile -ExecutionPolicy Bypass -File $monitor -Run | Out-Null
+$after = Get-Content $log | Select-Object -Last 3
 foreach ($l in $after) { P "  $l" }
 
 P ''
